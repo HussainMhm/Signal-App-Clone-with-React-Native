@@ -1,4 +1,4 @@
-import React, { useLayoutEffect } from "react";
+import { useEffect, useLayoutEffect, useState } from "react";
 import {
     SafeAreaView,
     ScrollView,
@@ -11,18 +11,43 @@ import {
 import { ListItem, Avatar } from "@rneui/base";
 import { AntDesign, SimpleLineIcons } from "@expo/vector-icons";
 
-import { FIREBASE_AUTH } from "../firebase";
+import { FIREBASE_AUTH, FIREBASE_DB } from "../firebase";
 import { signOut } from "firebase/auth";
+import { collection, getDocs } from "firebase/firestore";
 
 import CustomListItem from "../components/CustomListItem";
 
 const HomeScreen = ({ navigation }) => {
+    const [loading, setLoading] = useState(true);
+    const [chats, setChats] = useState([]);
+    console.log(chats);
+
     function signOutHandler() {
         signOut(FIREBASE_AUTH).then(() => {
             navigation.replace("Login");
         });
     }
 
+    // Fetch chats from Firebase
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const querySnapshot = await getDocs(collection(FIREBASE_DB, "chats"));
+                const fetchedChats = querySnapshot.docs.map((doc) => ({
+                    id: doc.id,
+                    data: doc.data(),
+                }));
+                setChats(fetchedChats);
+                setLoading(false);
+            } catch (error) {
+                console.error("Error fetching data:", error);
+            }
+        };
+
+        fetchData();
+    }, []);
+
+    // Set navigation options
     useLayoutEffect(() => {
         navigation.setOptions({
             title: "Signal",
@@ -69,8 +94,14 @@ const HomeScreen = ({ navigation }) => {
 
     return (
         <SafeAreaView>
-            <ScrollView>
-                <CustomListItem />
+            <ScrollView style={styles.container}>
+                {chats.length ? (
+                    chats.map(({ id, data }) => (
+                        <CustomListItem key={id} id={id} chatName={data.chatName} />
+                    ))
+                ) : (
+                    <Text>Loading...</Text>
+                )}
             </ScrollView>
         </SafeAreaView>
     );
@@ -78,4 +109,8 @@ const HomeScreen = ({ navigation }) => {
 
 export default HomeScreen;
 
-const styles = StyleSheet.create({});
+const styles = StyleSheet.create({
+    container: {
+        height: "100%",
+    },
+});

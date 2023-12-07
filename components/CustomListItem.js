@@ -2,9 +2,9 @@ import React from "react";
 import { StyleSheet, Text, View } from "react-native";
 import { ListItem, Avatar } from "@rneui/base";
 
-const CustomListItem = ({ id, chatName, enterChatHandler  }) => {
+const CustomListItem = ({ id, chatName, enterChatHandler }) => {
     return (
-        <ListItem>
+        <ListItem onPress={enterChatHandler} key={id} bottomDivider>
             <Avatar
                 rounded
                 source={{
@@ -12,10 +12,9 @@ const CustomListItem = ({ id, chatName, enterChatHandler  }) => {
                 }}
             />
             <ListItem.Content>
-                <ListItem.Title style={{ fontWeight: "800" }}>YouTube Chat</ListItem.Title>
+                <ListItem.Title style={{ fontWeight: "800" }}>{chatName}</ListItem.Title>
                 <ListItem.Subtitle numberOfLines={1} ellipsizeMode="tail">
-                    This is a test subtitle for YouTube Chat App Clone in React Native This is a
-                    test subtitle for YouTube Chat App Clone in React Native
+                    Lorem Ipsum
                 </ListItem.Subtitle>
             </ListItem.Content>
         </ListItem>
