@@ -4,7 +4,7 @@ import { Button, Input, Image } from "@rneui/base";
 import { StatusBar } from "expo-status-bar";
 
 import { FIREBASE_AUTH } from "../firebase";
-import { onAuthStateChanged } from "firebase/auth";
+import { onAuthStateChanged, signInWithEmailAndPassword } from "firebase/auth";
 
 const LoginScreen = ({ navigation }) => {
     const [email, setEmail] = useState("");
@@ -12,8 +12,7 @@ const LoginScreen = ({ navigation }) => {
 
     useEffect(() => {
         const unsubscribe = onAuthStateChanged(FIREBASE_AUTH, (authUser) => {
-            console.log(authUser);
-            if (authUser) { 
+            if (authUser) {
                 navigation.replace("Home");
             }
         });
@@ -22,7 +21,9 @@ const LoginScreen = ({ navigation }) => {
     }, []);
 
     function signInHandler() {
-        console.log("Sign in");
+        signInWithEmailAndPassword(FIREBASE_AUTH, email, password).catch((error) =>
+            alert(error.message)
+        );
     }
 
     return (
@@ -49,6 +50,7 @@ const LoginScreen = ({ navigation }) => {
                     type="password"
                     value={password}
                     onChangeText={(text) => setPassword(text)}
+                    onSubmitEditing={signInHandler}
                 />
             </View>
 
