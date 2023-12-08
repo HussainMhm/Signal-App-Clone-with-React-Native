@@ -28,6 +28,13 @@ const HomeScreen = ({ navigation }) => {
         });
     }
 
+    function enterChatHandler(id, chatName) {
+        navigation.navigate("Chat", {
+            id,
+            chatName,
+        });
+    }
+
     // Fetch chats from Firebase
     useEffect(() => {
         const fetchData = async () => {
@@ -45,7 +52,7 @@ const HomeScreen = ({ navigation }) => {
         };
 
         fetchData();
-    }, []);
+    }, [chats]);
 
     // Set navigation options
     useLayoutEffect(() => {
@@ -97,7 +104,12 @@ const HomeScreen = ({ navigation }) => {
             <ScrollView style={styles.container}>
                 {chats.length ? (
                     chats.map(({ id, data }) => (
-                        <CustomListItem key={id} id={id} chatName={data.chatName} />
+                        <CustomListItem
+                            key={id}
+                            id={id}
+                            chatName={data.chatName}
+                            enterChat={enterChatHandler}
+                        />
                     ))
                 ) : (
                     <Text>Loading...</Text>
